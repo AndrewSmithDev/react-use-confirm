@@ -38,17 +38,9 @@ export const ConfirmWrapper = ({ children }) => {
   return (
     <ConfirmContext.Provider value={{ confirm }}>
       <dialog open={open} ref={confirmRef}>
-        <form method="dialog">
-          <article>
-            <p>{message}</p>
-          </article>
-          <footer>
-            <menu>
-              <button onClick={handleCancel}>Cancel</button>
-              <button onClick={handleConfrim}>Confirm</button>
-            </menu>
-          </footer>
-        </form>
+        <p>{message}</p>
+        <button onClick={handleCancel}>Cancel</button>
+        <button onClick={handleConfrim}>Confirm</button>
       </dialog>
       {children}
     </ConfirmContext.Provider>
