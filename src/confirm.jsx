@@ -1,3 +1,5 @@
+import { Paper } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import React, { useRef, useState, useContext } from "react";
 
 const ConfirmContext = React.createContext();
@@ -7,26 +9,23 @@ export const useConfirm = () => {
 };
 
 export const ConfirmWrapper = ({ children }) => {
-  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const statusRef = useRef();
   const confirmRef = useRef();
 
   const confirm = (message) => {
     setMessage(message);
-    setOpen(true);
+    confirmRef.current.showModal();
 
-    statusRef.current = undefined;
+    statusRef.current = false;
     return new Promise((resolve) => {
       confirmRef.current.addEventListener("close", () => {
-        setOpen(false);
         resolve(statusRef.current);
       });
     });
   };
 
   const handleCancel = () => {
-    statusRef.current = false;
     confirmRef.current.close();
   };
 
@@ -37,10 +36,26 @@ export const ConfirmWrapper = ({ children }) => {
 
   return (
     <ConfirmContext.Provider value={{ confirm }}>
-      <dialog open={open} ref={confirmRef}>
-        <p>{message}</p>
-        <button onClick={handleCancel}>Cancel</button>
-        <button onClick={handleConfrim}>Confirm</button>
+      <dialog
+        ref={confirmRef}
+        style={{
+          border: "none",
+          background: "transparent",
+        }}
+      >
+        <Paper elevation={5} sx={{ padding: "24px 32px" }}>
+          <Typography variant="subtitle1" sx={{ marginBottom: "8px" }}>
+            {message}
+          </Typography>
+          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+            <Button onClick={handleCancel} variant="outlined">
+              Cancel
+            </Button>
+            <Button onClick={handleConfrim} variant="contained">
+              Confirm
+            </Button>
+          </div>
+        </Paper>
       </dialog>
       {children}
     </ConfirmContext.Provider>
