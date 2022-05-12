@@ -1,6 +1,7 @@
-import { Paper } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Paper } from "@mui/material";
 import { Typography, Button } from "@mui/material";
 import React, { useRef, useState, useContext } from "react";
+import { useMemo } from "react";
 
 const ConfirmContext = React.createContext();
 
@@ -10,53 +11,46 @@ export const useConfirm = () => {
 
 export const ConfirmWrapper = ({ children }) => {
   const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(false);
   const statusRef = useRef();
-  const confirmRef = useRef();
+  const event = useMemo(() => new Event("confirm"), []);
 
   const confirm = (message) => {
     setMessage(message);
-    confirmRef.current.showModal();
+    setOpen(true);
 
     statusRef.current = false;
     return new Promise((resolve) => {
-      confirmRef.current.addEventListener("close", () => {
-        resolve(statusRef.current);
-      });
+      document.addEventListener("confirm", () => resolve(statusRef.current));
     });
   };
 
   const handleCancel = () => {
-    confirmRef.current.close();
+    setOpen(false);
+    document.dispatchEvent(event);
   };
 
   const handleConfrim = () => {
     statusRef.current = true;
-    confirmRef.current.close();
+    setOpen(false);
+    document.dispatchEvent(event);
   };
 
   return (
     <ConfirmContext.Provider value={{ confirm }}>
-      <dialog
-        ref={confirmRef}
-        style={{
-          border: "none",
-          background: "transparent",
-        }}
-      >
-        <Paper elevation={5} sx={{ padding: "24px 32px" }}>
-          <Typography variant="subtitle1" sx={{ marginBottom: "8px" }}>
-            {message}
-          </Typography>
-          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-            <Button onClick={handleCancel} variant="outlined">
-              Cancel
-            </Button>
-            <Button onClick={handleConfrim} variant="contained">
-              Confirm
-            </Button>
-          </div>
-        </Paper>
-      </dialog>
+      <Dialog open={open}>
+        <DialogContent>
+          <Typography variant="subtitle1">{message}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfrim} variant="contained">
+            OK
+          </Button>
+          <Button onClick={handleCancel} variant="outlined">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
       {children}
     </ConfirmContext.Provider>
   );
