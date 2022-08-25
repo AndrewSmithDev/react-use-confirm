@@ -25,4 +25,4 @@ export const MyComponent = () => {
 
 ```
 
-[View an running example on Vercel](https://dialog-example-pink.vercel.app/)
+[View a demo running on Vercel](https://dialog-example-pink.vercel.app/)
