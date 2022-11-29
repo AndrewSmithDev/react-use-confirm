@@ -1,4 +1,4 @@
-A very simple confirm dialog using the new [dialog element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog)
+A very simple confirm dialog using the new [dialog element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) with a custom hook `useConfirm`
 
 ```javascript
 export const MyComponent = () => {
