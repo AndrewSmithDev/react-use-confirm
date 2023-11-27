@@ -26,55 +26,19 @@ export const MyComponent = () => {
 ```
 
 ```javascript
-// use confirm code
-import React, { useRef, useState, useContext } from "react";
+// setup
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ConfirmWrapper } from "./confirm";
+import { MyComponent } from "./component";
 
-const ConfirmContext = React.createContext();
-
-export const useConfirm = () => {
-  return useContext(ConfirmContext);
-};
-
-export const ConfirmWrapper = ({ children }) => {
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const statusRef = useRef();
-  const confirmRef = useRef();
-
-  const confirm = (message) => {
-    setMessage(message);
-    setOpen(true);
-
-    statusRef.current = undefined;
-    return new Promise((resolve) => {
-      confirmRef.current.addEventListener("close", () => {
-        setOpen(false);
-        resolve(statusRef.current);
-      });
-    });
-  };
-
-  const handleCancel = () => {
-    statusRef.current = false;
-    confirmRef.current.close();
-  };
-
-  const handleConfrim = () => {
-    statusRef.current = true;
-    confirmRef.current.close();
-  };
-
-  return (
-    <ConfirmContext.Provider value={{ confirm }}>
-      <dialog open={open} ref={confirmRef}>
-        <p>{message}</p>
-        <button onClick={handleCancel}>Cancel</button>
-        <button onClick={handleConfrim}>Confirm</button>
-      </dialog>
-      {children}
-    </ConfirmContext.Provider>
-  );
-};
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <ConfirmWrapper>
+      <MyComponent />
+    </ConfirmWrapper>
+  </React.StrictMode>
+); 
 ```
 
 [View a demo running on Vercel](https://dialog-example-pink.vercel.app/)
